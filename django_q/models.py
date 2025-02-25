@@ -148,7 +148,7 @@ def validate_cron(value):
 
 
 class Schedule(models.Model):
-    name = models.CharField(max_length=100, null=True, blank=True)
+    name = models.CharField(max_length=100, null=False, blank=False)
     func = models.CharField(max_length=256, help_text="e.g. module.tasks.function")
     hook = models.CharField(
         max_length=256,
@@ -194,13 +194,30 @@ class Schedule(models.Model):
     )
     cron = models.CharField(
         max_length=100,
-        null=True,
-        blank=True,
+        null=False,
+        blank=False,
         validators=[validate_cron],
         help_text=_("Cron expression"),
     )
     task = models.CharField(max_length=100, null=True, editable=False)
     cluster = models.CharField(max_length=100, default=None, null=True, blank=True)
+    COLOMBIA = "COL"
+    CHILE = "CHL"
+    COSTARICA = "CRI"
+    ECUADOR = "ECU"
+    PANAMA = "PAN"
+    PERU = "PER"
+    TYPE = (
+        (COLOMBIA, _("COLOMBIA")),
+        (CHILE, _("CHILE")),
+        (COSTARICA, _("COSTA RICA")),
+        (ECUADOR, _("ECUADOR")),
+        (PANAMA, _("PANAMA")),
+        (PERU, _("PERU")),
+    )
+    country = models.CharField(
+        max_length=50, choices=TYPE, default=TYPE[0][0], verbose_name=_("country")
+    )
 
     def success(self):
         if self.task and Task.objects.filter(id=self.task):
